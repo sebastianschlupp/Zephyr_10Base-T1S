@@ -13,6 +13,9 @@ and use sleep requests and semaphores to control the rate at which messages
 are generated. This demonstrates that kernel scheduling, communication,
 and timing are operating correctly.
 
+Additionally the HWINFO module was included and the HW ID is printed to the 
+console.
+
 Building and Running
 ********************
 

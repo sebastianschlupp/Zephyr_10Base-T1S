@@ -8,6 +8,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/drivers/hwinfo.h>
 
 /*
  * The hello world demo has two threads that utilize semaphores and sleeping
@@ -37,13 +38,16 @@ void helloLoop(const char *my_name,
 	       struct k_sem *my_sem, struct k_sem *other_sem)
 {
 	const char *tname;
+	uint8_t device_id[20];
+	size_t device_id_max_size = sizeof(device_id)/sizeof(*device_id);
+	ssize_t device_id_size;
 	uint8_t cpu;
 	struct k_thread *current_thread;
 
 	while (1) {
 		/* take my semaphore */
 		k_sem_take(my_sem, K_FOREVER);
-
+		device_id_size = hwinfo_get_device_id(device_id,device_id_max_size);
 		current_thread = k_current_get();
 		tname = k_thread_name_get(current_thread);
 #if CONFIG_SMP
@@ -51,6 +55,25 @@ void helloLoop(const char *my_name,
 #else
 		cpu = 0;
 #endif
+		/* print HW ID*/
+		
+		
+		if (device_id_size == -ENOSYS){
+			printk("Device ID not supported on current Hardware ");
+			break;
+		} else if(device_id_size < 0){
+			printk("Driver error ");
+			break;
+		} else {
+			/* printk("Device ID max size is: %d ",device_id_max_size); */
+			/* printk("Device ID size is: %d ",device_id_size); */
+			printk("HW ID is: ");
+			for(int i=0; i<device_id_size; i++) {
+     				printk("%c", device_id[i]);
+			}
+			printk(" ");
+		}
+		
 		/* say "hello" */
 		if (tname == NULL) {
 			printk("%s: Hello World from cpu %d on %s!\n",

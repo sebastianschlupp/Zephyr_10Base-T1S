@@ -1,0 +1,3 @@
+[submodule "boards/arm/atsame51_cnano"]
+	path = boards/arm/atsame51_cnano
+	url = git@github.com:sebastianschlupp/atsame51_cnano.git
